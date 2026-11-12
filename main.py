@@ -6,4 +6,8 @@ from pathlib import Path
 src = Path(__file__).parent / "entry.txt"
 out_dir = Path(os.environ.get("MAKEFUN_OUTPUT_DIR", "/output"))
 out_dir.mkdir(parents=True, exist_ok=True)
-shutil.copyfile(src, out_dir / "entry.txt")
+# Copy via a temp file and rename, so the output is never a truncated
+# entry.txt if the process dies mid-copy.
+tmp = out_dir / "entry.txt.tmp"
+shutil.copyfile(src, tmp)
+tmp.replace(out_dir / "entry.txt")
